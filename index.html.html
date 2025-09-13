@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الأسماء والصور</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        :root {
+            /* Unique Color Palette based on image */
+            --bg-color: #1a0f0d;
+            --container-bg: rgba(26, 15, 13, 0.85); /* لون المربع الشفاف (تم إخفاؤه حاليًا) */
+            --primary-color: #ad8e59; /* هذا لون العنوان الرئيسي H1 وأزرار ابدأ اللعبة والتالي وإظهار الصورة */
+            --primary-hover: #ad8e59; /* هذا لون الأزرار الأساسية عند التمرير عليها */
+            --success-color: #ad8e59; /* هذا لون زر أضف */
+            --success-hover: #ad8e59; /* هذا لون زر أضف عند التمرير عليه */
+            --danger-color: #ad8e59; /* هذا لون أيقونة الحذف (X) */
+            --text-color: #ad8e59; /* هذا لون النصوص العامة في الصفحة */
+            --placeholder-color: #ad8e59; /* هذا لون النص الذي يظهر في حقل الإدخال */
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-image: url('https://cdn.discordapp.com/attachments/1396269233448685642/1416206335556714606/ChatGPT_Image_12_2025_08_09_44_.png?ex=68c6006e&is=68c4aeee&hm=d0d030ca8a28949289197099a39bc7111472260209aede3ea4818f13940d6007&');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            color: var(--text-color);
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            width: 90%;
+            max-width: 600px;
+            transition: transform 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-8px);
+        }
+
+        h1 {
+            color: var(--primary-color); /* العنوان الرئيسي يستخدم لون --primary-color */
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+        }
+
+        .input-container {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        #name-input {
+            flex-grow: 1;
+            padding: 15px;
+            border: 2px solid #ad8e59; /* حدود حقل الإدخال تستخدم اللون الجديد */
+            border-radius: 10px;
+            font-size: 1.1rem;
+            text-align: right;
+            background-color: transparent; /* هذا لون خلفية المربع الذي يحتوي على الاسم وأيقونة الحذف (شفاف) */
+            color: var(--text-color);
+            border: 2px solid #ad8e59; /* حدود حقل الإدخال تستخدم اللون الجديد */
+        }
+
+        #name-input::placeholder {
+            color: var(--placeholder-color); /* لون النص التوجيهي (placeholder) */
+        }
+
+        .button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--bg-color); /* لون النص على الأزرار هو --bg-color */
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+        }
+
+        #add-button {
+            background-color: var(--primary-color); /* زر أضف يستخدم لون --success-color */
+        }
+
+        #add-button:hover {
+            background-color: var(--primary-hover); /* لون زر أضف عند التمرير عليه */
+        }
+
+        #start-button {
+            background-color: var(--primary-color); /* زر ابدأ اللعبة يستخدم لون --primary-color */
+            display: none;
+            margin-top: 25px;
+        }
+
+        #start-button:hover {
+            background-color: var(--primary-hover); /* لون زر ابدأ اللعبة عند التمرير عليه */
+        }
+        
+        #next-button {
+            background-color: var(--primary-color); /* زر التالي يستخدم لون --primary-color */
+            display: none;
+            margin-top: 25px;
+        }
+        
+        #next-button:hover {
+            background-color: var(--primary-hover); /* لون زر التالي عند التمرير عليه */
+        }
+
+        #names-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .name-item {
+            background-color: transparent; /* هذا لون خلفية المربع الذي يحتوي على الاسم وأيقونة الحذف (شفاف) */
+            padding: 10px 15px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        .remove-icon {
+            cursor: pointer;
+            color: var(--danger-color); /* أيقونة الحذف (X) تستخدم لون --danger-color */
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: transform 0.2s ease;
+        }
+
+        .remove-icon:hover {
+            transform: scale(1.2);
+        }
+
+        #display-area {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 25px;
+        }
+
+        #name-message-text {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: var(--primary-color); /* نص "عط الجوال لـ..." يستخدم لون --primary-color */
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        #person-image {
+            width: 350px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 5px solid var(--primary-color); /* حدود الصورة تستخدم لون --primary-color */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1s ease-in-out;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        #show-image-button {
+            background-color: var(--primary-color); /* زر إظهار الصورة يستخدم لون --primary-color */
+        }
+        
+        #show-image-button:hover {
+            background-color: var(--primary-hover); /* لون زر إظهار الصورة عند التمرير عليه */
+        }
+
+        #final-message {
+            font-size: 2.5rem;
+            color: var(--success-color); /* نص "انتهت اللعبة" يستخدم لون --success-color */
+            display: none;
+            animation: fadeIn 1s ease-in-out;
+            font-weight: bold;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="add-name-section">
+        <h1>لعبة الأسماء والصور</h1>
+        <div class="input-container">
+            <input type="text" id="name-input" placeholder="اكتب الاسم هنا..." dir="rtl">
+            <button class="button" id="add-button">أضف</button>
+        </div>
+        
+        <ul id="names-list">
+            </ul>
+        
+        <button class="button" id="start-button">ابدأ اللعبة</button>
+    </div>
+
+    <div id="display-area">
+        <p id="name-message-text"></p>
+        <button class="button" id="show-image-button">اضغط لترى صورتك</button>
+        <img id="person-image" src="" alt="صورة الشخص">
+        <button class="button" id="next-button">التالي</button>
+    </div>
+
+    <div id="final-message">
+        <button class="button" id="start-story-button" style="display:none; background-color: var(--primary-color);">الانتقال إلى السالفة</button>
+    </div>
+</div>
+
+<script>
+    const normalImages = [
+        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
+        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
+        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
+        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
+        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
+        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
+    ];
+
+    const liarImage = 'https://sdmntprsouthcentralus.oaiusercontent.com/files/00000000-5a00-61f7-8536-f3001b96df20/raw?se=2025-09-13T00%3A39%3A57Z&sp=r&sv=2024-08-04&sr=b&scid=5b4a2799-9432-5962-af5f-a7df5930c9c3&skoid=732f244e-db13-47c3-bcc7-7ee02a9397bc&sktid=a48cca56-e6da-484e-a814-9c849652bcb3&skt=2025-09-12T21%3A02%3A58Z&ske=2025-09-13T21%3A02%3A58Z&sks=b&skv=2024-08-04&sig=/sgK661tQhNd1GljGcB/DjYkMgCrk3TBEuaa60zlX%2B4%3D';
+
+    const names = [];
+    let currentNameIndex = 0;
+    let gameData = { names: [], liar: null };
+
+    const nameInput = document.getElementById('name-input');
+    const addButton = document.getElementById('add-button');
+    const startButton = document.getElementById('start-button');
+    const nextButton = document.getElementById('next-button');
+    const showImageButton = document.getElementById('show-image-button');
+    const displayArea = document.getElementById('display-area');
+    const nameMessageText = document.getElementById('name-message-text');
+    const personImage = document.getElementById('person-image');
+    const finalMessage = document.getElementById('final-message');
+    const addNameSection = document.getElementById('add-name-section');
+    const namesList = document.getElementById('names-list');
+    const startStoryButton = document.getElementById('start-story-button');
+
+    function updateNamesList() {
+        namesList.innerHTML = '';
+        names.forEach((person, index) => {
+            const listItem = document.createElement('li');
+            listItem.classList.add('name-item');
+            listItem.innerHTML = `
+                <span>${person.name}</span>
+                <span class="remove-icon" data-index="${index}">×</span>
+            `;
+            namesList.appendChild(listItem);
+        });
+
+        document.querySelectorAll('.remove-icon').forEach(icon => {
+            icon.addEventListener('click', function(event) {
+                const indexToRemove = parseInt(event.target.dataset.index);
+                names.splice(indexToRemove, 1);
+                updateNamesList();
+            });
+        });
+
+        if (names.length >= 2) {
+            startButton.style.display = 'block';
+        } else {
+            startButton.style.display = 'none';
+        }
+    }
+
+    function addName() {
+        const name = nameInput.value.trim();
+        if (name === '') {
+            return;
+        }
+        names.push({ name: name, isLiar: false, image: '' });
+        nameInput.value = '';
+        updateNamesList();
+        nameInput.focus();
+    }
+
+    function startGame() {
+        if (names.length < 2) {
+            alert('يجب إضافة اسمين على الأقل لبدء اللعبة!');
+            return;
+        }
+
+        const liarIndex = Math.floor(Math.random() * names.length);
+        names[liarIndex].isLiar = true;
+        
+        let normalImageCounter = 0;
+        names.forEach(person => {
+            if (person.isLiar) {
+                person.image = liarImage;
+            } else {
+                person.image = normalImages[normalImageCounter % normalImages.length];
+                normalImageCounter++;
+            }
+        });
+
+        gameData.names = names;
+        gameData.liar = names[liarIndex].name;
+
+        addNameSection.style.display = 'none';
+        displayArea.style.display = 'flex';
+        showCurrentName();
+    }
+
+    function showCurrentName() {
+        if (currentNameIndex < gameData.names.length) {
+            const currentPerson = gameData.names[currentNameIndex];
+            nameMessageText.textContent = `عط الجوال لـ ${currentPerson.name}`;
+            
+            showImageButton.textContent = `أنا ${currentPerson.name}`;
+            showImageButton.style.display = 'block';
+            nextButton.style.display = 'none';
+            personImage.style.display = 'none';
+        } else {
+            displayArea.style.display = 'none';
+            finalMessage.style.display = 'block';
+            startStoryButton.style.display = 'block';
+        }
+    }
+    
+    function revealImage() {
+        const currentPerson = gameData.names[currentNameIndex];
+        personImage.src = currentPerson.image;
+        
+        nameMessageText.style.display = 'none';
+        personImage.style.display = 'block';
+        showImageButton.style.display = 'none';
+        nextButton.style.display = 'block';
+        nextButton.textContent = 'التالي';
+    }
+
+    function nextPerson() {
+        currentNameIndex++;
+        nameMessageText.style.display = 'block';
+        showCurrentName();
+    }
+
+    addButton.addEventListener('click', addName);
+    nameInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            addName();
+        }
+    });
+
+    startButton.addEventListener('click', startGame);
+    showImageButton.addEventListener('click', revealImage);
+    nextButton.addEventListener('click', nextPerson);
+    startStoryButton.addEventListener('click', function() {
+        localStorage.setItem('gameData', JSON.stringify(gameData));
+        window.location.href = 'story.html';
+    });
+</script>
+
+</body>
+</html>
