@@ -368,11 +368,12 @@
     startButton.addEventListener('click', startGame);
     showImageButton.addEventListener('click', revealImage);
     nextButton.addEventListener('click', nextPerson);
-    startStoryButton.addEventListener('click', function() {
-        localStorage.setItem('gameData', JSON.stringify(gameData));
-        window.location.href = 'story.html';
-    });
+   startStoryButton.addEventListener('click', function() {
+    localStorage.setItem('gameData', JSON.stringify(gameData));
+    window.location.href = 'page2.html';
+});
 </script>
 
 </body>
+
 </html>
