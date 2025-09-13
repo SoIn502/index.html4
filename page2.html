@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مرحلة السالفة والتصويت</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
+
+        :root {
+            /* Same color palette as the main page */
+            --bg-color: #0e1a2c;
+            --container-bg: #1a2c41;
+            --primary-color: #f7a22e;
+            --primary-hover: #e09228;
+            --success-color: #3fe276;
+            --success-hover: #36c968;
+            --danger-color: #e23f5b;
+            --text-color: #f0f4f8;
+            --placeholder-color: #6a7c93;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            color: var(--text-color);
+            transition: background-color 0.5s ease;
+        }
+
+        .container {
+            background: var(--container-bg);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+            width: 90%;
+            max-width: 600px;
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+        }
+        
+        h2 {
+            font-size: 2rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+            color: var(--success-color);
+            margin-bottom: 20px;
+        }
+
+        .button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--text-color);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .button:hover {
+            transform: translateY(-3px);
+        }
+
+        #next-person-button {
+            background-color: var(--primary-color);
+            margin-top: 25px;
+        }
+        
+        #next-person-button:hover {
+            background-color: var(--primary-hover);
+        }
+
+        #story-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #timer {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--success-color);
+            margin-top: 20px;
+        }
+        
+        .story-text {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Voting Section */
+        #voting-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #voter-name {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .vote-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+        }
+
+        .vote-option-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #2a415a;
+            color: var(--text-color);
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .vote-option-button:hover {
+            background-color: #3e5a7b;
+            transform: translateY(-2px);
+        }
+        
+        /* Results Section */
+        #results-section {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #results-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        .result-item {
+            font-size: 1.3rem;
+            background-color: #2a415a;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-item span:first-child {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .result-item span:last-child {
+            color: var(--success-color);
+        }
+        
+        .liar-reveal {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: var(--danger-color); /* لون مميز للكاذب */
+            margin-top: 15px;
+            margin-bottom: 20px;
+            background-color: #3a1a2a;
+            padding: 10px 20px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="story-section">
+        <h2 id="story-teller-name"></h2>
+        <h3 id="timer">05:00</h3>
+        <button class="button" id="next-person-button">الشخص التالي</button>
+    </div>
+
+    <div id="voting-section">
+        <h1>مرحلة التصويت</h1>
+        <h2 id="voter-name"></h2>
+        <div class="vote-options" id="vote-options">
+            </div>
+    </div>
+    
+    <div id="results-section">
+        <h1>النتائج النهائية</h1>
+        <div id="liar-reveal" class="liar-reveal" style="display:none;"></div>
+        <ul id="results-list">
+            </ul>
+    </div>
+</div>
+
+<script>
+    const storySection = document.getElementById('story-section');
+    const storyTellerName = document.getElementById('story-teller-name');
+    const nextPersonButton = document.getElementById('next-person-button');
+    const timerDisplay = document.getElementById('timer');
+
+    const votingSection = document.getElementById('voting-section');
+    const voterNameDisplay = document.getElementById('voter-name');
+    const voteOptionsContainer = document.getElementById('vote-options');
+
+    const resultsSection = document.getElementById('results-section');
+    const resultsList = document.getElementById('results-list');
+    const liarRevealDiv = document.getElementById('liar-reveal');
+
+    const gameData = JSON.parse(localStorage.getItem('gameData'));
+    const names = gameData ? gameData.names : [];
+    const liarName = gameData ? gameData.liar : null;
+
+    let currentStoryTellerIndex = 0;
+    let currentVoterIndex = 0;
+    let timerInterval;
+    const votes = {};
+
+    // Initialize votes for each person
+    names.forEach(person => votes[person.name] = []);
+
+    function startStorytelling() {
+        if (currentStoryTellerIndex < names.length) {
+            const currentPerson = names[currentStoryTellerIndex];
+            storyTellerName.textContent = `${currentPerson.name}، قل السالفة`;
+            startTimer(300); // 5 minutes = 300 seconds
+        } else {
+            endStorytelling();
+        }
+    }
+
+    function startTimer(duration) {
+        let timer = duration, minutes, seconds;
+        timerInterval = setInterval(() => {
+            minutes = parseInt(timer / 60, 10);
+            seconds = parseInt(timer % 60, 10);
+
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            timerDisplay.textContent = minutes + ":" + seconds;
+
+            if (--timer < 0) {
+                clearInterval(timerInterval);
+                nextStoryTeller();
+            }
+        }, 1000);
+    }
+    
+    function nextStoryTeller() {
+        clearInterval(timerInterval);
+        currentStoryTellerIndex++;
+        startStorytelling();
+    }
+    
+    function endStorytelling() {
+        storySection.style.display = 'none';
+        votingSection.style.display = 'flex';
+        startVoting();
+    }
+
+    function startVoting() {
+        if (currentVoterIndex < names.length) {
+            const voter = names[currentVoterIndex];
+            voterNameDisplay.textContent = `${voter.name}، اختر الشخص الكاذب`;
+            
+            voteOptionsContainer.innerHTML = '';
+            names.forEach(person => {
+                // A person cannot vote for themselves
+                if (person.name !== voter.name) {
+                    const button = document.createElement('button');
+                    button.classList.add('vote-option-button');
+                    button.textContent = person.name;
+                    button.addEventListener('click', () => recordVote(voter.name, person.name));
+                    voteOptionsContainer.appendChild(button);
+                }
+            });
+        } else {
+            endVoting();
+        }
+    }
+    
+    function recordVote(voter, votedFor) {
+        votes[votedFor].push(voter);
+        currentVoterIndex++;
+        startVoting();
+    }
+    
+    function endVoting() {
+        votingSection.style.display = 'none';
+        resultsSection.style.display = 'flex';
+        displayResults();
+    }
+
+    function displayResults() {
+        // عرض الكاذب الحقيقي
+        if (liarName) {
+            liarRevealDiv.textContent = `الكاذب الحقيقي كان: ${liarName}`;
+            liarRevealDiv.style.display = 'block';
+        }
+
+        resultsList.innerHTML = '';
+        names.forEach(person => {
+            const voteCount = votes[person.name].length;
+            const listItem = document.createElement('li');
+            listItem.classList.add('result-item');
+            listItem.innerHTML = `
+                <span>${person.name}:</span>
+                <span>${voteCount} صوت</span>
+            `;
+            resultsList.appendChild(listItem);
+        });
+        
+        const detailedList = document.createElement('ul');
+        detailedList.style.listStyle = 'none';
+        detailedList.style.padding = '0';
+        detailedList.style.marginTop = '20px';
+        
+        names.forEach(person => {
+            if (votes[person.name].length > 0) {
+                const item = document.createElement('li');
+                item.style.marginBottom = '10px';
+                item.style.fontSize = '1.1rem';
+                item.innerHTML = `<span style="color: var(--primary-color); font-weight: bold;">${person.name}</span> صُوّت عليه من قِبل: <span style="color: var(--success-color);">${votes[person.name].join(', ')}</span>`;
+                detailedList.appendChild(item);
+            }
+        });
+        resultsSection.appendChild(detailedList);
+    }
+    
+    nextPersonButton.addEventListener('click', nextStoryTeller);
+
+    // Initial call to start the game
+    if (gameData && names.length > 0) {
+        startStorytelling();
+    } else {
+       document.querySelector('.container').innerHTML = `<h1>لم يتم العثور على أسماء!</h1><p>الرجاء العودة للصفحة الرئيسية لإضافة أسماء.</p><button class="button" onclick="window.location.href='index.html'">العودة</button>`;
+    }
+</script>
+</body>
+</html>
