@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة الأسماء والصور</title>
+    <title>مين الكاذب !</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -207,7 +207,7 @@
 
 <div class="container">
     <div id="add-name-section">
-        <h1>لعبة الأسماء والصور</h1>
+        <h1>! مين الكاذب </h1>
         <div class="input-container">
             <input type="text" id="name-input" placeholder="اكتب الاسم هنا..." dir="rtl">
             <button class="button" id="add-button">أضف</button>
@@ -233,15 +233,13 @@
 
 <script>
     const normalImages = [
-        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
-        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
-        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
-        'https://i.pinimg.com/736x/4a/92/98/4a929806535c4227f78df5b6ac8d150b.jpg',
-        'https://cdn.discordapp.com/attachments/1396269233448685642/1411264636845686825/MedalTVFiveM20250725223609.png?ex=68c5d25d&is=68c480dd&hm=c922fee1ac1f3147570520f75a3b4e01aba8d6715b3599bc4c0757e542bf1920&',
-        'https://cdn.discordapp.com/attachments/1396269233448685642/1411264636845686825/MedalTVFiveM20250725223609.png?ex=68c5d25d&is=68c480dd&hm=c922fee1ac1f3147570520f75a3b4e01aba8d6715b3599bc4c0757e542bf1920&',
+        'https://i.imgur.com/7fIHpzo.png',
+        'https://i.imgur.com/7fIHpzo.png',
+        'https://i.imgur.com/7fIHpzo.png',
+        'https://i.imgur.com/7fIHpzo.png',
     ];
 
-    const liarImage = 'https://cdn.discordapp.com/attachments/1396269233448685642/1411264636845686825/MedalTVFiveM20250725223609.png?ex=68c5d25d&is=68c480dd&hm=c922fee1ac1f3147570520f75a3b4e01aba8d6715b3599bc4c0757e542bf1920&';
+ const liarImage = 'https://i.imgur.com/XuW73jl.png'
 
     const names = [];
     let currentNameIndex = 0;
@@ -368,14 +366,11 @@
     startButton.addEventListener('click', startGame);
     showImageButton.addEventListener('click', revealImage);
     nextButton.addEventListener('click', nextPerson);
-   startStoryButton.addEventListener('click', function() {
+  startStoryButton.addEventListener('click', function() {
     localStorage.setItem('gameData', JSON.stringify(gameData));
     window.location.href = 'page2.html';
 });
 </script>
 
 </body>
-
 </html>
-
-
